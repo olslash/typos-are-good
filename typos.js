@@ -2,8 +2,6 @@ var fs = require('fs');
 var split = require('split');
 var through = require('through');
 
-
-
 // build an object full of words: {a: [], the: [], hi: []}
 // we will generate typos within the sub arrays:
 // {a: [q,w,s,z]} etc
@@ -40,6 +38,7 @@ var typoize = function(dict) {
       }
       return dict;
     },
+
     genDoubledLetters: function(dict) {
       for(var word in dict) {
         var typos = dict[word];
@@ -47,6 +46,7 @@ var typoize = function(dict) {
       }
       return dict;
     },
+
     genKeyboardNeighbors: function(dict) {
       return dict;
     }
@@ -59,9 +59,11 @@ var typoize = function(dict) {
   return dict;
 };
 
-// parseWords(function(json){
-//   typoize(json);
-// });
-console.log(
-typoize({a:[], the: [], grapes: []})
-);
+parseWords(function(json){
+  typoize(json);
+  var count = 0;
+  for(var word in json) {
+    count += json[word].length;
+  }
+  console.log(count);
+});
