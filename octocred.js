@@ -1,12 +1,15 @@
 // var github = require("octonode");
 var inquirer = require('inquirer');
 var https = require('https');
+
+var get = require('./typos.js').get;
+
 var limiter = require('./rateLimitedQueue.js');
 var requestQueue = limiter.createQueue({interval: 3000});
 
 var makeGithubApiRequest = function(options, callback) {
   var result;
-  console.log('requesting', options);
+  // console.log('requesting', options);
   var req = https.request(options, function(res) {
     // console.log('STATUS: ' + res.statusCode);
     // console.log('HEADERS: ' + JSON.stringify(res.headers));
@@ -33,7 +36,7 @@ var makeGithubApiRequest = function(options, callback) {
 };
 
 var getStarredRepos = function(threshold, callback, page) {
-  var auth = 'Basic ' + new Buffer('olslash' + ':' + 'mycoolpassword1').toString('base64');
+  var auth = 'Basic ' + new Buffer('olslash' + ':' + '').toString('base64');
 
   var options = {
     host: 'api.github.com',
@@ -73,7 +76,7 @@ var digForStars = function(callback) {
 };
 
 var getCode = function(typoslist, reposlist, callback) {
-  var auth = 'Basic ' + new Buffer('olslash' + ':' + 'mycoolpassword1').toString('base64');
+  var auth = 'Basic ' + new Buffer('olslash' + ':' + '').toString('base64');
 
   reposlist.forEach(function(repo) {
     // for every repo
@@ -127,26 +130,36 @@ var digForTypos = function(typos, repos, callback) {
   });
 };
 
+get(function(typos){
+  digForStars(function(ALL_REPOS_OVER_5000) {
+    // result.items has every repo
+    // result.item[i].full_name has the repo name
+    // result.items.forEach(function(item) {
+    //   console.log(item.full_name);
+    // });
+    
+    // now we enter callback hell, holding only a LIST containing
+    // the names of FIVE THOUSAND or so PRIME REPOS. Onward.
 
-digForStars(function(ALL_REPOS_OVER_5000) {
-  // result.items has every repo
-  // result.item[i].full_name has the repo name
-  // result.items.forEach(function(item) {
-  //   console.log(item.full_name);
-  // });
-  
-  // now we enter callback hell, holding only a LIST containing
-  // the names of FIVE THOUSAND or so PRIME REPOS. Onward.
+    // TEST, REMOVE BELOW TO UNLEASH:
+    // ALL_REPOS_OVER_5000 = ['jquery/jquery'];
 
-  // TEST, REMOVE BELOW TO UNLEASH:
-  // ALL_REPOS_OVER_5000 = ['jquery/jquery'];
+    // var testTypos = {align: ['aling', 'allign', 'aline'], position: ['possition']};
+    
+    digForTypos(typos, ALL_REPOS_OVER_5000, function(result) {
 
-  // var testTypos = {align: ['aling', 'allign', 'aline'], position: ['possition']};
-  
-  digForTypos(typos, ALL_REPOS_OVER_5000, function(result) {
-    // var result = {items:[]};
-    console.log(result);
+      // console.log(result);
+      console.log('searching...');
+      result.items.forEach(function(item) {
+        console.log(item.text_matches);
+        item.text_matches.forEach(function(match) {
+          console.log('MATCHES:', match.matches);
+        });
+      });
+    });
   });
 });
+
+
 
 

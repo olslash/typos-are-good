@@ -7,7 +7,7 @@ var through = require('through');
 // {a: [q,w,s,z]} etc
 var parseWords = function(callback) {
   var json = {};
-  var write = fs.createWriteStream('json.txt');
+  // var write = fs.createWriteStream('json.txt');
   var read = fs.createReadStream('words.txt')
     .pipe(split())
     .pipe(through(function write(data){
@@ -59,11 +59,12 @@ var typoize = function(dict) {
   return dict;
 };
 
-parseWords(function(json){
-  typoize(json);
-  var count = 0;
-  for(var word in json) {
-    count += json[word].length;
-  }
-  console.log(count);
-});
+var get = function(callback) {
+  parseWords(function(json){
+    callback(typoize(json));
+  });  
+};
+
+
+
+module.exports = {get: get};
