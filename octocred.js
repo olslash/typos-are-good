@@ -36,7 +36,7 @@ var makeGithubApiRequest = function(options, callback) {
 };
 
 var getStarredRepos = function(threshold, callback, page) {
-  var auth = 'Basic ' + new Buffer('olslash' + ':' + '').toString('base64');
+  var auth = 'Basic ' + new Buffer('user' + ':' + 'pass').toString('base64');
 
   var options = {
     host: 'api.github.com',
@@ -58,7 +58,7 @@ var digForStars = function(callback) {
 
   function traverse(page) {
     console.log('finding stars on page', page);
-    getStarredRepos(10000, function(json) {
+    getStarredRepos(7000, function(json) {
       json.items.forEach(function(repo) {
         result.items.push(repo.full_name);
       });
@@ -76,7 +76,7 @@ var digForStars = function(callback) {
 };
 
 var getCode = function(typoslist, reposlist, callback) {
-  var auth = 'Basic ' + new Buffer('olslash' + ':' + '').toString('base64');
+  var auth = 'Basic ' + new Buffer('olslash' + ':' + 'mycoolpassword1').toString('base64');
 
   reposlist.forEach(function(repo) {
     // for every repo
@@ -149,13 +149,18 @@ get(function(typos){
     digForTypos(typos, ALL_REPOS_OVER_5000, function(result) {
 
       // console.log(result);
-      console.log('searching...');
-      result.items.forEach(function(item) {
-        console.log(item.text_matches);
-        item.text_matches.forEach(function(match) {
-          console.log('MATCHES:', match.matches);
-        });
-      });
+      try {
+          console.log('searching...');
+          result.items.forEach(function(item) {
+            // console.log(item.text_matches);
+            item.text_matches.forEach(function(match) {
+              console.log('URL:', match.object_url);
+              console.log('FRAGMENT:', match.fragment);
+              console.log('MATCHES:', match.matches);
+            });
+          });
+      } catch (e){ console.log('caught', e); }
+
     });
   });
 });
